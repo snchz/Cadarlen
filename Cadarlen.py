@@ -11,6 +11,8 @@ class Evento:
 		self.fechaFin = datetime.datetime.strptime(fechaFin, "%Y-%m-%d")
 		self.descripcion=descripcion
 		self.insert()
+	def __str__(self):
+		return self.descripcion
 	def insert(self):
 		nf = "datos.db"
 		db = sqlite3.connect(nf)
@@ -22,7 +24,13 @@ class Evento:
 		db.close()
 class Calendario:
 	def __init__(self):
-		a=1
+		dummy=1
+	def pintar(self):
+		#TODO
+		print "Funcion Pendiente..."
+	def eliminar(self,idEvento):
+		#TODO
+		print "Funcion Pendiente"
 	def agregar(self,e):
 		i=e.idEvento
 		if e.idPeriocidad==1:
@@ -50,11 +58,16 @@ class Calendario:
 		db.close()
 c=Calendario()
 
+#TODO Opcion login o crear usuario
+
+idUsuario=1
 while 1==1:
+	c.pintar()
 	fhi=raw_input("Fecha hora inicio (YYYY-MM-DD HH:MM): ")
 	fhf=raw_input("Fecha hora fin (YYYY-MM-DD HH:MM): ")
 	ff=raw_input("Fecha fin (YYYY-MM-DD): ")
+	#TODO Pintar periocidades
 	p=raw_input("Periocidad: ")
 	d=raw_input("Descripcion: ")
-	e=Evento(1,fhi,fhf,p,ff,d)
+	e=Evento(idUsuario,fhi,fhf,p,ff,d)
 	c.agregar(e)
