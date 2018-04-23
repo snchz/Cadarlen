@@ -1,5 +1,9 @@
 import sqlite3, os, hashlib
 
+#TODO Agregar campo de Estado al calendario TODO DOING DONE
+#Todas las tareas de hoy se pondran como DOING y conforme se acerque la hora nos oedira que actualicemos el estado.
+#Si se pasa el dia la oonemos en estado DESCONOCIDO
+
 nf = "datos.db"
 
 #Si existe el fichero db, lo borro

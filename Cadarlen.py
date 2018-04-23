@@ -6,7 +6,7 @@ import datetime
 
 class BD:
 	#
-	def __init__(self, nf)
+	def __init__(self, nf):
 		dummy=1
 		#TODO
 		
