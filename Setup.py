@@ -2,49 +2,61 @@ import sqlite3, os, hashlib
 
 nf = "datos.db"
 
+#Si existe el fichero db, lo borro
 if os.path.isfile(nf):
 	os.remove(nf)
 
 db = sqlite3.connect(nf)
 cu = db.cursor()
 
-se = "CREATE TABLE Usuarios (idUsuario INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, password TEXT)"
-cu.execute(se)
+##########################
+# TABLE Usuarios
+##########################
+cu.execute("CREATE TABLE Usuarios (idUsuario INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, password TEXT)")
 
-tmp=hashlib.sha224("abc123").hexdigest()
+tmp=hashlib.sha224("abc123".encode('utf-8')).hexdigest()
 cu.execute("INSERT INTO Usuarios (nombre,password) VALUES (?,?)",["admin",tmp])
 
-se = "CREATE TABLE Periocidad (idPeriocidad INTEGER PRIMARY KEY AUTOINCREMENT, descripcion TEXT)"
-cu.execute(se)
 
-se = "INSERT INTO Periocidad (descripcion) VALUES('NO')"
-cu.execute(se)
-se = "INSERT INTO Periocidad (descripcion) VALUES('DIARIA')"
-cu.execute(se)
-se = "INSERT INTO Periocidad (descripcion) VALUES('SEMANAL')"
-cu.execute(se)
-se = "INSERT INTO Periocidad (descripcion) VALUES('MENSUAL')"
-cu.execute(se)
-se = "INSERT INTO Periocidad (descripcion) VALUES('ANUAL')"
-cu.execute(se)
-se = "INSERT INTO Periocidad (descripcion) VALUES('QUINCENAL')"
-cu.execute(se)
-se = "INSERT INTO Periocidad (descripcion) VALUES('DIARIA')"
-cu.execute(se)
+##########################
+# TABLE Periocidades
+##########################
+cu.execute("CREATE TABLE Periocidades (idPeriocidad INTEGER PRIMARY KEY AUTOINCREMENT, descripcion TEXT, tipo TEXT, incremento INTEGER)")
 
-se = (	"CREATE TABLE Evento "
+cu.execute("INSERT INTO Periocidades (descripcion,tipo,incremento) VALUES('NO','D','0')")
+cu.execute("INSERT INTO Periocidades (descripcion,tipo,incremento) VALUES('DIARIA','D',1)")
+cu.execute("INSERT INTO Periocidades (descripcion,tipo,incremento) VALUES('SEMANAL','D',7)")
+cu.execute("INSERT INTO Periocidades (descripcion,tipo,incremento) VALUES('MENSUAL','M',1)")
+cu.execute("INSERT INTO Periocidades (descripcion,tipo,incremento) VALUES('ANUAL','M',12)")
+cu.execute("INSERT INTO Periocidades (descripcion,tipo,incremento) VALUES('QUINCENAL','D',15)")
+cu.execute("INSERT INTO Periocidades (descripcion,tipo,incremento) VALUES('TRIMESTRAL','M',3)")
+cu.execute("INSERT INTO Periocidades (descripcion,tipo,incremento) VALUES('SEMESTRAL','M',6)")
+
+
+##########################
+# TABLE Eventos
+##########################
+se = (	"CREATE TABLE Eventos "
 	"(idEvento INTEGER PRIMARY KEY AUTOINCREMENT, idUsuario INTEGER, fechaHoraInicio DATETIME, fechaHoraFin DATETIME, "
 	"idPeriocidad INTEGER, fechaFin DATE, descripcion TEXTO)")
 cu.execute(se)
 
-se = "CREATE TABLE Calendario (fechaHoraInicio DATETIME, fechaHoraFin DATETIME, idEvento INTEGER)"
-cu.execute(se)
+##########################
+# TABLE Eventos
+##########################
+cu.execute("CREATE TABLE Calendario (fechaHoraInicio DATETIME, fechaHoraFin DATETIME, idEvento INTEGER)")
 
+
+##########################
+# VIEW VCalendario
+##########################
 se=(	"CREATE VIEW VCalendario AS "
-	"SELECT u.nombre, c.fechaHoraInicio, c.fechaHoraFin, e.descripcion "
+	"SELECT u.idUsuario, u.nombre, c.fechaHoraInicio, c.fechaHoraFin, e.idEvento, e.descripcion "
 	"FROM Calendario c "
-	"INNER JOIN Evento e ON (c.idEvento=e.idEvento) "
-	"INNER JOIN Usuarios u ON (u.idUsuario=e.idUsuario)")
+	"INNER JOIN Eventos e ON (c.idEvento=e.idEvento) "
+	"INNER JOIN Usuarios u ON (u.idUsuario=e.idUsuario) "
+	"WHERE c.fechaHoraInicio>=date('now') "
+	"ORDER BY c.fechaHoraInicio DESC")
 cu.execute(se)
 
 #dependiendo de la periocidad se inserta
@@ -52,4 +64,3 @@ db.commit()
 
 cu.close()
 db.close()
-
