@@ -4,6 +4,16 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta #pip install --user python-dateutil
 import datetime
 
+class colores:
+	HEADER = '\033[95m'
+	OKBLUE = '\033[94m'
+	OKGREEN = '\033[92m'
+	WARNING = '\033[93m'
+	FAIL = '\033[91m'
+	ENDC = '\033[0m'
+	BOLD = '\033[1m'
+	UNDERLINE = '\033[4m'
+
 class BD:
 	#
 	def __init__(self, nf):
@@ -27,7 +37,6 @@ class Evento:
 		cu = db.cursor()
 		cu.execute("INSERT INTO Eventos (idUsuario,fechaHoraInicio,fechaHoraFin,idPeriocidad,fechaFin,descripcion) VALUES(?,?,?,?,?,?)", [self.idUsuario,self.fechaHoraInicio,self.fechaHoraFin,self.idPeriocidad,self.fechaFin,self.descripcion])
 		self.idEvento=cu.lastrowid
-		print("idEvento: "+str(self.idEvento))
 		db.commit()
 		cu.close()
 		db.close()
@@ -82,13 +91,12 @@ class Calendario:
 		nf="datos.db"
 		db=sqlite3.connect(nf)
 		cu=db.cursor()
-		print(self.idUsuario)
 		cu.execute("SELECT * FROM VCalendario WHERE idUsuario=?",[self.idUsuario])
 		filas=cu.fetchall()
-		print("### CALENDARIO ####")
+		print(colores.OKBLUE+"### CALENDARIO ####"+colores.ENDC)
 		for fila in filas:
 			print(fila)
-		print("### ### ### ### ###")
+		print(colores.OKBLUE+"### ### ### ### ###"+colores.ENDC)
 		cu.close()
 		db.close()
 	#Pinta las diferentes Periocidades que existen en tabla
@@ -155,6 +163,7 @@ c=None
 ##################################
 logado=0
 while logado==0:
+	print("".rjust(100,"#"))
 	login=int(input("[1] Login o [2] Crear Usuario: "))
 	if login==2:
 		usuario=input("Nuevo usuario: ")
@@ -176,6 +185,8 @@ while logado==0:
 		except:
 			print("Usuario o password incorrecto.")
 time.sleep(2)
+
+
 
 ##################################
 #Mientras mostramos lo siguiente podemos hacer calculos
