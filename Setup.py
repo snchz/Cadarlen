@@ -16,7 +16,7 @@ cu = db.cursor()
 ##########################
 # TABLE Usuarios
 ##########################
-cu.execute("CREATE TABLE Usuarios (idUsuario INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, password TEXT)")
+cu.execute("CREATE TABLE Usuarios (idUsuario INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT UNIQUE, password TEXT)")
 
 tmp=hashlib.sha224("abc123".encode('utf-8')).hexdigest()
 cu.execute("INSERT INTO Usuarios (nombre,password) VALUES (?,?)",["admin",tmp])
