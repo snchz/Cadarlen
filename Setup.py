@@ -1,9 +1,5 @@
 import sqlite3, os, hashlib
 
-#TODO Agregar campo de Estado al calendario TODO DOING DONE
-#Todas las tareas de hoy se pondran como DOING y conforme se acerque la hora nos oedira que actualicemos el estado.
-#Si se pasa el dia la oonemos en estado DESCONOCIDO
-
 nf = "datos.db"
 
 #Si existe el fichero db, lo borro
@@ -16,7 +12,7 @@ cu = db.cursor()
 ##########################
 # TABLE Usuarios
 ##########################
-cu.execute("CREATE TABLE Usuarios (idUsuario INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT UNIQUE, password TEXT)")
+cu.execute("CREATE TABLE Usuarios (idUsuario INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, password TEXT)")
 
 tmp=hashlib.sha224("abc123".encode('utf-8')).hexdigest()
 cu.execute("INSERT INTO Usuarios (nombre,password) VALUES (?,?)",["admin",tmp])
@@ -39,6 +35,8 @@ cu.execute("INSERT INTO Periocidades (descripcion,tipo,incremento) VALUES('SEMES
 
 ##########################
 # TABLE Eventos
+# Es importante mantener las fechaHoraInicio y fechaHoraFin como datetime ya que permite tareas que pases de un dia a otro
+# Por ejemplo una tarea que empiece a las 23:00 y finalice a las 01:00 del dia siguiente, y se repita semanalmente
 ##########################
 se = (	"CREATE TABLE Eventos "
 	"(idEvento INTEGER PRIMARY KEY AUTOINCREMENT, idUsuario INTEGER, fechaHoraInicio DATETIME, fechaHoraFin DATETIME, "
@@ -68,3 +66,4 @@ db.commit()
 
 cu.close()
 db.close()
+
